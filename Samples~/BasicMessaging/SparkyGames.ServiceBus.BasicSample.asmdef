@@ -1,0 +1,14 @@
+{
+    "name": "SparkyGames.ServiceBus.BasicSample",
+    "rootNamespace": "SparkyGames.UnityServiceBus.Samples",
+    "references": ["SparkyGames.ServiceBus"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

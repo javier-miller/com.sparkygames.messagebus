@@ -1,60 +1,76 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace SparkyGames.UnityServiceBus
 {
-    /// <summary>
-    /// Unity Message Broker
-    /// </summary>
+    /// <summary>Provides named buses shared for one Unity Play session.</summary>
     public static class UnityMessageBroker
     {
-        private static IDictionary<string, IBus> _busCollection = new Dictionary<string, IBus>();
+        private static readonly Dictionary<string, Bus> Buses =
+            new Dictionary<string, Bus>(StringComparer.Ordinal);
 
-        /// <summary>
-        /// Creates the bus.
-        /// </summary>
-        /// <returns></returns>
-        public static IBus CreateBus()
+        public static IBus GetOrCreateBus()
         {
-            return CreateBus("Default");
+            return GetOrCreateBus("Default");
         }
 
-        /// <summary>
-        /// Creates the bus.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <returns></returns>
-        public static IBus CreateBus(string name)
+        public static IBus GetOrCreateBus(string name)
         {
-            if (!_busCollection.ContainsKey(name))
+            ValidateName(name);
+
+            if (Buses.TryGetValue(name, out var existing))
+                return existing;
+
+            var bus = new Bus(name);
+            bus.Disposed += OnBusDisposed;
+            Buses.Add(name, bus);
+            return bus;
+        }
+
+        /// <summary>Disposes and removes a named global bus. Existing users become invalid.</summary>
+        public static bool RemoveBus(string name)
+        {
+            ValidateName(name);
+            if (!Buses.TryGetValue(name, out var bus))
+                return false;
+
+            bus.Dispose();
+            return true;
+        }
+
+        /// <summary>Returns a snapshot of the currently registered buses.</summary>
+        public static IReadOnlyList<IBus> GetAll()
+        {
+            var snapshot = new List<IBus>(Buses.Count);
+            foreach (var bus in Buses.Values)
+                snapshot.Add(bus);
+            return snapshot;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetForPlaySession()
+        {
+            var snapshot = new List<Bus>(Buses.Values);
+            Buses.Clear();
+
+            foreach (var bus in snapshot)
             {
-                var bus = new Bus(name);
-                _busCollection.Add(name, bus);
-
-                bus.Disposing += Bus_Disposing;
-
-                return bus;
+                bus.Disposed -= OnBusDisposed;
+                bus.Dispose();
             }
-
-            return _busCollection[name];
         }
 
-        /// <summary>
-        /// Gets all.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<IBus> GetAll() => _busCollection.Values.ToList();
-
-        /// <summary>
-        /// Buses the disposing.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The e.</param>
-        private static void Bus_Disposing(object sender, IBus e)
+        private static void OnBusDisposed(Bus bus)
         {
-            var bus = e as Bus;
-            bus.Disposing -= Bus_Disposing;
-            _busCollection.Remove(bus.Name);
+            if (Buses.TryGetValue(bus.Name, out var current) && ReferenceEquals(current, bus))
+                Buses.Remove(bus.Name);
+        }
+
+        private static void ValidateName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("A bus name is required.", nameof(name));
         }
     }
 }

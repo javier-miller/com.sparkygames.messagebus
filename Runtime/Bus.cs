@@ -1,130 +1,165 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace SparkyGames.UnityServiceBus
 {
     /// <summary>
-    /// Bus Implementation
+    /// Delivers messages synchronously to subscribers in registration order.
+    /// A Bus is owned and disposed by the code that creates it.
     /// </summary>
-    /// <seealso cref="IBus" />
-    public class Bus : IBus
+    public sealed class Bus : IBus
     {
-        private IList<SubscriptionBase> _subscriptionCollection = new List<SubscriptionBase>();
+        private Subscription[] _subscriptions = Array.Empty<Subscription>();
+        private bool _isDisposed;
 
-        /// <summary>
-        /// Occurs when [disposing].
-        /// </summary>
-        public event EventHandler<IBus> Disposing;
+        internal event Action<Bus> Disposed;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Bus"/> class.
-        /// </summary>
-        /// <param name="name">The name.</param>
         public Bus(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("A bus name is required.", nameof(name));
+
             Name = name;
         }
 
-        /// <summary>
-        /// Gets the name.
-        /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
         public string Name { get; }
 
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public void Publish(IMessage message)
         {
-            foreach (var subscription in _subscriptionCollection)
-                subscription.Publish(message);
-        }
+            ThrowIfDisposed();
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
 
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <typeparam name="TType">The type of the type.</typeparam>
-        /// <param name="message">The message.</param>
-        public void Publish<TType>(TType message) where TType : class, IMessage
-        {
-            foreach (var subscription in _subscriptionCollection)
-                subscription.Publish(message);
-        }
+            // Mutations replace the array. This publication keeps its original order,
+            // while disposed entries become inactive immediately.
+            var snapshot = _subscriptions;
+            List<Exception> errors = null;
 
-        /// <summary>
-        /// Subscribes the specified on message.
-        /// </summary>
-        /// <typeparam name="TType">The type of the type.</typeparam>
-        /// <param name="onMessage">The on message.</param>
-        /// <returns></returns>
-        public ISubscriptionResult Subscribe<TType>(Action<TType> onMessage) where TType : class, IMessage
-        {
-            var subscription = new Subscription<TType>(onMessage);
-
-            subscription.Disposing += Subscription_Disposing;
-
-            _subscriptionCollection.Add(subscription);
-
-            return subscription;
-        }
-
-        /// <summary>
-        /// Subscribes the specified on message.
-        /// </summary>
-        /// <param name="onMessage">The on message.</param>
-        /// <returns></returns>
-        public ISubscriptionResult Subscribe(Action<IMessage> onMessage)
-        {
-            var subscription = new Subscription(onMessage);
-
-            subscription.Disposing += Subscription_Disposing;
-
-            _subscriptionCollection.Add(subscription);
-
-            return subscription;
-        }
-
-        private void Subscription_Disposing(object sender, EventArgs e)
-        {
-            var subscription = sender as SubscriptionBase;
-
-            subscription.Disposing -= Subscription_Disposing;
-            _subscriptionCollection.Remove(subscription);
-        }
-
-        #region IDisposable Support
-
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
+            foreach (var subscription in snapshot)
             {
-                if (disposing)
+                if (!subscription.IsActive)
+                    continue;
+
+                try
                 {
-                    foreach (var subscription in _subscriptionCollection)
-                    {
-                        subscription.Disposing -= Subscription_Disposing;
-                        subscription.Dispose();
-                    }
-
-                    _subscriptionCollection.Clear();
+                    subscription.Deliver(message);
                 }
+                catch (Exception error)
+                {
+                    if (errors == null)
+                        errors = new List<Exception>();
+                    errors.Add(error);
+                }
+            }
 
-                disposedValue = true;
-                Disposing?.Invoke(this, this);
+            if (errors != null)
+                throw new AggregateException("One or more message subscribers failed.", errors);
+        }
+
+        public IDisposable Subscribe<TMessage>(Action<TMessage> onMessage)
+            where TMessage : class, IMessage
+        {
+            ThrowIfDisposed();
+            if (onMessage == null)
+                throw new ArgumentNullException(nameof(onMessage));
+
+            return AddSubscription(message =>
+            {
+                if (message is TMessage typedMessage)
+                    onMessage(typedMessage);
+            });
+        }
+
+        public IDisposable Subscribe(Action<IMessage> onMessage)
+        {
+            ThrowIfDisposed();
+            if (onMessage == null)
+                throw new ArgumentNullException(nameof(onMessage));
+
+            return AddSubscription(onMessage);
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+
+            _isDisposed = true;
+            var subscriptions = _subscriptions;
+            _subscriptions = Array.Empty<Subscription>();
+
+            foreach (var subscription in subscriptions)
+                subscription.Invalidate();
+
+            var disposed = Disposed;
+            Disposed = null;
+            disposed?.Invoke(this);
+        }
+
+        private IDisposable AddSubscription(Action<IMessage> onMessage)
+        {
+            var subscription = new Subscription(this, onMessage);
+            var next = new Subscription[_subscriptions.Length + 1];
+            Array.Copy(_subscriptions, next, _subscriptions.Length);
+            next[next.Length - 1] = subscription;
+            _subscriptions = next;
+            return subscription;
+        }
+
+        private void Remove(Subscription subscription)
+        {
+            var current = _subscriptions;
+            var index = Array.IndexOf(current, subscription);
+            if (index < 0)
+                return;
+
+            var next = new Subscription[current.Length - 1];
+            if (index > 0)
+                Array.Copy(current, 0, next, 0, index);
+            if (index < next.Length)
+                Array.Copy(current, index + 1, next, index, next.Length - index);
+            _subscriptions = next;
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Bus));
+        }
+
+        private sealed class Subscription : IDisposable
+        {
+            private Bus _owner;
+            private Action<IMessage> _onMessage;
+
+            internal Subscription(Bus owner, Action<IMessage> onMessage)
+            {
+                _owner = owner;
+                _onMessage = onMessage;
+            }
+
+            internal bool IsActive => _onMessage != null;
+
+            internal void Deliver(IMessage message)
+            {
+                _onMessage?.Invoke(message);
+            }
+
+            internal void Invalidate()
+            {
+                _owner = null;
+                _onMessage = null;
+            }
+
+            public void Dispose()
+            {
+                var owner = _owner;
+                if (owner == null)
+                    return;
+
+                Invalidate();
+                owner.Remove(this);
             }
         }
-
-        // This code added to correctly implement the disposable pattern.
-        void IDisposable.Dispose()
-        {
-            Dispose(true);
-        }
-
-        #endregion
     }
 }

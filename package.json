@@ -1,18 +1,24 @@
 {
   "name": "com.sparkygames.servicebus",
   "displayName": "Sparky Games Service Bus",
-  "version": "1.0.0",
-  "unityRelease": "0a19",
-  "unity": "2020.2",
-  "description": "Sparky Games Service Bus",
+  "version": "2.0.0",
+  "unity": "6000.0",
+  "description": "A synchronous typed message bus for communication between Unity components and systems.",
   "keywords": [
-    "2d"
+    "messaging",
+    "events",
+    "communication"
   ],
   "author": {
     "name": "Sparky Code Studios",
     "email": "sparkystudios@proton.me"
   },
-  "category": "2D",
-  "dependencies": {
-  }
+  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "Basic Messaging",
+      "description": "Two MonoBehaviours that exchange a typed message through a named bus.",
+      "path": "Samples~/BasicMessaging"
+    }
+  ]
 }

@@ -1,38 +1,18 @@
-﻿using System;
+using System;
 
 namespace SparkyGames.UnityServiceBus
 {
-    /// <summary>
-    /// Bus Interface
-    /// </summary>
+    /// <summary>Publishes messages and owns their subscriptions.</summary>
     public interface IBus : IDisposable
     {
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <param name="message">The message.</param>
+        /// <summary>Delivers a message synchronously to matching subscribers.</summary>
         void Publish(IMessage message);
 
-        /// <summary>
-        /// Publishes the specified message.
-        /// </summary>
-        /// <typeparam name="TType">The type of the type.</typeparam>
-        /// <param name="message">The message.</param>
-        void Publish<TType>(TType message) where TType : class, IMessage;
+        /// <summary>Subscribes to a message type and its assignable subtypes.</summary>
+        IDisposable Subscribe<TMessage>(Action<TMessage> onMessage)
+            where TMessage : class, IMessage;
 
-        /// <summary>
-        /// Subscribes the specified on message.
-        /// </summary>
-        /// <typeparam name="TType">The type of the type.</typeparam>
-        /// <param name="onMessage">The on message.</param>
-        /// <returns></returns>
-        ISubscriptionResult Subscribe<TType>(Action<TType> onMessage) where TType : class, IMessage;
-
-        /// <summary>
-        /// Subscribes the specified on message.
-        /// </summary>
-        /// <param name="onMessage">The on message.</param>
-        /// <returns></returns>
-        ISubscriptionResult Subscribe(Action<IMessage> onMessage);
+        /// <summary>Subscribes to every message.</summary>
+        IDisposable Subscribe(Action<IMessage> onMessage);
     }
 }

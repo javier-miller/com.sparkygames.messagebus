@@ -1,14 +1,7 @@
-﻿using System;
-
 namespace SparkyGames.UnityServiceBus
 {
-    /// <summary>
-    /// Message Interface
-    /// </summary>
+    /// <summary>Marks a value as a message that can be delivered by a bus.</summary>
     public interface IMessage
     {
-        string Id { get; }
-
-        DateTime Date { get; }
     }
 }
