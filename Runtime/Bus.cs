@@ -7,7 +7,7 @@ namespace SparkyGames.MessageBus
     /// Delivers messages synchronously to subscribers in registration order.
     /// A Bus is owned and disposed by the code that creates it.
     /// </summary>
-    public sealed class Bus : IBus
+    public sealed class Bus : IBus, IDisposable
     {
         private Subscription[] _subscriptions = Array.Empty<Subscription>();
         private bool _isDisposed;
@@ -57,7 +57,7 @@ namespace SparkyGames.MessageBus
         }
 
         public IDisposable Subscribe<TMessage>(Action<TMessage> onMessage)
-            where TMessage : class, IMessage
+            where TMessage : IMessage
         {
             ThrowIfDisposed();
             if (onMessage == null)

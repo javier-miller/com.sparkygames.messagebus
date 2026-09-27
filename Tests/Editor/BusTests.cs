@@ -12,6 +12,37 @@ namespace SparkyGames.MessageBus.Tests
 
         private sealed class DerivedMessage : BaseMessage, ITaggedMessage { }
 
+        private readonly struct ValueMessage : ITaggedMessage
+        {
+            public ValueMessage(int value) { Value = value; }
+
+            public int Value { get; }
+        }
+
+        [Test]
+        public void BusInterfaceDoesNotGrantDisposal()
+        {
+            Assert.That(typeof(IDisposable).IsAssignableFrom(typeof(IBus)), Is.False);
+            Assert.That(typeof(IDisposable).IsAssignableFrom(typeof(Bus)), Is.True);
+        }
+
+        [Test]
+        public void ValueMessagesReachTypedInterfaceAndGeneralSubscribers()
+        {
+            using (var bus = new Bus("test"))
+            {
+                IBus shared = bus;
+                var calls = new List<string>();
+                shared.Subscribe<ValueMessage>(message => calls.Add("value " + message.Value));
+                shared.Subscribe<ITaggedMessage>(_ => calls.Add("interface"));
+                shared.Subscribe((IMessage _) => calls.Add("all"));
+
+                shared.Publish(new ValueMessage(42));
+
+                CollectionAssert.AreEqual(new[] { "value 42", "interface", "all" }, calls);
+            }
+        }
+
         [Test]
         public void PublishDeliversInRegistrationOrderToAssignableAndGeneralSubscribers()
         {

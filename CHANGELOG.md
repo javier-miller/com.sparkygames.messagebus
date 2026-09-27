@@ -2,6 +2,17 @@
 
 All notable changes to Sparky Games Message Bus are documented here.
 
+## [3.0.0] - Unreleased
+
+### Changed
+
+- `IBus` no longer inherits `IDisposable`. Code that creates a standalone `Bus` disposes that concrete instance; shared buses are removed through `UnityMessageBroker.RemoveBus`.
+- `Subscribe<TMessage>` accepts any `IMessage`, including value types. Publishing a value type through `Publish(IMessage)` boxes it.
+
+### Migration from 2.0.0
+
+- Keep the concrete `Bus` reference when your code owns its lifetime. Pass `IBus` to publishers and subscribers. Remove shared buses through `UnityMessageBroker.RemoveBus`.
+
 ## [2.0.0] - 2026-09-27
 
 ### Changed
