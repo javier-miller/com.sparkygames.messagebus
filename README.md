@@ -4,7 +4,7 @@ Bus de mensajes síncrono para comunicar componentes y sistemas de Unity sin ref
 
 - Paquete UPM: `com.sparkygames.messagebus`.
 - Versión en desarrollo: `3.0.0` (última versión publicada: `2.0.0`).
-- Unity mínimo declarado: `6000.0`.
+- Unity mínimo declarado: `6000.6`.
 - Ensamblado: `SparkyGames.MessageBus`.
 - Namespace: `SparkyGames.MessageBus`.
 - Dependencias UPM: ninguna.
@@ -80,6 +80,6 @@ Si un emisor necesita registrar los errores de los receptores, puede capturar `A
 
 El sample **Basic Messaging** contiene un emisor y un receptor `MonoBehaviour`. Importarlo desde Package Manager, añadir cada componente a un GameObject activo y entrar en Play; el receptor registra el mensaje en Console. Su README indica los pasos exactos.
 
-Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.messagebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La revisión `3.0.0` en desarrollo pasó 10 pruebas Edit Mode y 2 Play Mode en Unity `6000.6.2f1` mediante una dependencia local. La versión publicada `2.0.0` se importó desde Git y se verificó en Unity `6000.6.2f1` con 8 pruebas Edit Mode y 3 Play Mode, incluido el sample. Antes del cambio de nombre, el runtime de `2.0.0` también se verificó en Unity `6000.6.0f1`; el mínimo `6000.0` se declara para la línea Unity 6, aunque esa revisión exacta no estaba disponible para probarla. Las versiones anteriores a Unity 6 ya no forman parte del soporte previsto.
+Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.messagebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La revisión `3.0.0` en desarrollo pasó 10 pruebas Edit Mode y 2 Play Mode en Unity `6000.6.2f1` mediante una dependencia local. Su mínimo declarado es `6000.6`; se verificará la importación Git y el sample antes de publicarla. La versión publicada `2.0.0` se verificó desde Git en Unity `6000.6.2f1` con 8 pruebas Edit Mode y 3 Play Mode, incluido el sample. Su mínimo declarado `6000.0` no pudo probarse en este equipo.
 
 Los cambios incompatibles con `1.0.0` y los pasos de migración están en `CHANGELOG.md`.

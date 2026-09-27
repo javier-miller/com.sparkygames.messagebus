@@ -9,7 +9,7 @@ Convertir el paquete en un bus de mensajes local, síncrono y fiable para comuni
 - **Fases 1–5 implementadas y validadas para `2.0.0`.** El manifiesto declara Unity `6000.0` como mínimo y el sample Basic Messaging se importa desde Package Manager.
 - **Validación de `2.0.0`:** la identidad final `com.sparkygames.messagebus` se importó desde Git en Unity `6000.6.2f1` y pasó 8 pruebas Edit Mode y 3 Play Mode, incluida una prueba del sample importado. La implementación anterior al cambio de nombre se validó también en Unity `6000.6.0f1` con los mismos resultados. El mínimo exacto `6000.0` no estaba instalado. En la fase 4 se verificó además el reinicio de Play con recarga de dominio activada y desactivada.
 - **Publicación Git:** `v2.0.0` está publicado en el repositorio `javier-miller/com.sparkygames.messagebus`. Los cambios de propiedad y mensajes de valor para `3.0.0` están en desarrollo.
-- **Validación de `3.0.0` en desarrollo:** dependencia local en Unity `6000.6.2f1`, con 10 pruebas Edit Mode y 2 Play Mode superadas. La prueba del sample importado corresponde a `2.0.0`; el sample no ha cambiado en esta revisión.
+- **Validación de `3.0.0` en desarrollo:** dependencia local en Unity `6000.6.2f1`, con 10 pruebas Edit Mode y 2 Play Mode superadas. El mínimo declarado para `3.0.0` se ajusta a `6000.6`, la primera revisión instalada que puede verificarse. Pendiente comprobar la importación Git y el sample antes de publicar.
 
 ## Contrato que debe quedar definido antes de cambiar la API
 
