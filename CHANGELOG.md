@@ -2,13 +2,13 @@
 
 All notable changes to Sparky Games Message Bus are documented here.
 
-## [3.0.0] - Unreleased
+## [3.0.0] - 2026-09-27
 
 ### Changed
 
 - `IBus` no longer inherits `IDisposable`. Code that creates a standalone `Bus` disposes that concrete instance; shared buses are removed through `UnityMessageBroker.RemoveBus`.
 - `Subscribe<TMessage>` accepts any `IMessage`, including value types. Publishing a value type through `Publish(IMessage)` boxes it.
-- Minimum declared Unity version is `6000.6`, the earliest installed editor available for validating this release.
+- Minimum declared Unity version is `6000.6`, verified with Unity `6000.6.0f1` and `6000.6.2f1`.
 
 ### Migration from 2.0.0
 

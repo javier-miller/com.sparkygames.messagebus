@@ -3,7 +3,7 @@
 Bus de mensajes síncrono para comunicar componentes y sistemas de Unity sin referencias directas entre emisor y receptor.
 
 - Paquete UPM: `com.sparkygames.messagebus`.
-- Versión en desarrollo: `3.0.0` (última versión publicada: `2.0.0`).
+- Versión: `3.0.0`.
 - Unity mínimo declarado: `6000.6`.
 - Ensamblado: `SparkyGames.MessageBus`.
 - Namespace: `SparkyGames.MessageBus`.
@@ -11,7 +11,7 @@ Bus de mensajes síncrono para comunicar componentes y sistemas de Unity sin ref
 
 ## Instalación
 
-En Package Manager, usar **Add package from git URL** con `https://github.com/javier-miller/com.sparkygames.messagebus.git#v2.0.0` para instalar la última versión publicada. Para probar los cambios de `3.0.0` antes de publicarlos, usar **Add package from disk** y elegir el `package.json` de esta carpeta. El paquete incluye el sample **Basic Messaging** en la pestaña Samples.
+En Package Manager, usar **Add package from git URL** con `https://github.com/javier-miller/com.sparkygames.messagebus.git#v3.0.0`. Para desarrollar desde una copia local, usar **Add package from disk** y elegir el `package.json` de esta carpeta. El paquete incluye el sample **Basic Messaging** en la pestaña Samples.
 
 ## Uso desde un MonoBehaviour
 
@@ -80,6 +80,6 @@ Si un emisor necesita registrar los errores de los receptores, puede capturar `A
 
 El sample **Basic Messaging** contiene un emisor y un receptor `MonoBehaviour`. Importarlo desde Package Manager, añadir cada componente a un GameObject activo y entrar en Play; el receptor registra el mensaje en Console. Su README indica los pasos exactos.
 
-Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.messagebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La revisión `3.0.0` en desarrollo pasó 10 pruebas Edit Mode y 2 Play Mode en Unity `6000.6.2f1` mediante una dependencia local. Su mínimo declarado es `6000.6`; se verificará la importación Git y el sample antes de publicarla. La versión publicada `2.0.0` se verificó desde Git en Unity `6000.6.2f1` con 8 pruebas Edit Mode y 3 Play Mode, incluido el sample. Su mínimo declarado `6000.0` no pudo probarse en este equipo.
+Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.messagebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La versión `3.0.0` se importó desde Git en proyectos limpios con Unity `6000.6.0f1` y `6000.6.2f1`; en cada uno pasaron 10 pruebas Edit Mode y 3 Play Mode, incluida la prueba del sample importado. El mínimo declarado `6000.6` quedó verificado en `6000.6.0f1`.
 
-Los cambios incompatibles con `1.0.0` y los pasos de migración están en `CHANGELOG.md`.
+Los cambios incompatibles con `2.0.0` y `1.0.0`, junto con los pasos de migración, están en `CHANGELOG.md`.
