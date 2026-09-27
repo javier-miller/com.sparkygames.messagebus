@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SparkyGames.UnityServiceBus
+namespace SparkyGames.MessageBus
 {
     /// <summary>
     /// Delivers messages synchronously to subscribers in registration order.

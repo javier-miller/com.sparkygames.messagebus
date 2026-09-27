@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-namespace SparkyGames.UnityServiceBus.Tests
+namespace SparkyGames.MessageBus.Tests
 {
-    internal sealed class ServiceBusTestMessage : IMessage { }
+    internal sealed class MessageBusTestMessage : IMessage { }
 
-    public sealed class ServiceBusTestReceiver : MonoBehaviour
+    public sealed class MessageBusTestReceiver : MonoBehaviour
     {
-        private const string BusName = "ServiceBusPlayModeTests";
+        private const string BusName = "MessageBusPlayModeTests";
         private IDisposable _subscription;
 
         public int ReceivedCount { get; private set; }
@@ -15,7 +15,7 @@ namespace SparkyGames.UnityServiceBus.Tests
         private void OnEnable()
         {
             _subscription = UnityMessageBroker.GetOrCreateBus(BusName)
-                .Subscribe<ServiceBusTestMessage>(_ => ReceivedCount++);
+                .Subscribe<MessageBusTestMessage>(_ => ReceivedCount++);
         }
 
         private void OnDisable()

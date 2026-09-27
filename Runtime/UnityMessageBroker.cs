@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SparkyGames.UnityServiceBus
+namespace SparkyGames.MessageBus
 {
     /// <summary>Provides named buses shared for one Unity Play session.</summary>
     public static class UnityMessageBroker

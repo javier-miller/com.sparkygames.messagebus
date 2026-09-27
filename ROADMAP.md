@@ -1,4 +1,4 @@
-# Roadmap de Sparky Games Service Bus
+# Roadmap de Sparky Games Message Bus
 
 ## Objetivo
 
@@ -7,7 +7,7 @@ Convertir el paquete en un bus de mensajes local, síncrono y fiable para comuni
 ## Estado (2026-09-27)
 
 - **Fases 1–5 implementadas y validadas para `2.0.0`.** El manifiesto declara Unity `6000.0` como mínimo y el sample Basic Messaging se importa desde Package Manager.
-- **Validación de `2.0.0`:** importación Git en proyectos limpios con Unity `6000.6.0f1` y `6000.6.2f1`; en cada uno pasaron 8 pruebas Edit Mode y 3 Play Mode, incluida una prueba del sample importado. El mínimo exacto `6000.0` no estaba instalado. En la fase 4 se verificó además el reinicio de Play con recarga de dominio activada y desactivada.
+- **Validación de `2.0.0`:** la identidad final `com.sparkygames.messagebus` se importó desde Git en Unity `6000.6.2f1` y pasó 8 pruebas Edit Mode y 3 Play Mode, incluida una prueba del sample importado. La implementación anterior al cambio de nombre se validó también en Unity `6000.6.0f1` con los mismos resultados. El mínimo exacto `6000.0` no estaba instalado. En la fase 4 se verificó además el reinicio de Play con recarga de dominio activada y desactivada.
 - **Publicación Git:** el tag local `v2.0.0` debe apuntar al commit de esta versión. Publicar el commit y el tag en el remoto es una acción separada.
 
 ## Contrato que debe quedar definido antes de cambiar la API
@@ -46,7 +46,7 @@ Si alguna de estas decisiones cambia al implementar, actualizar primero este con
 1. Quitar el parámetro genérico sin uso de `MessageBase<TType>`. Permitir mensajes tipados sencillos sin obligar a crear un GUID y una fecha para cada evento interno.
 2. Si se conservan metadatos opcionales, usar nombres y tiempo UTC inequívocos y mantenerlos separados del contrato mínimo de mensaje.
 3. Revisar si `Subscription`, `SubscriptionBase`, `ISubscription` e `ISubscriptionResult` deben ser públicos. Exponer solo el contrato que necesita un consumidor: `IBus`, el mensaje y un token `IDisposable`.
-4. Preservar el ID UPM `com.sparkygames.servicebus` y el nombre de ensamblado `SparkyGames.ServiceBus`. Si se separa el núcleo de la integración Unity en dos ensamblados, hacerlo solo si aporta una ventaja concreta a consumidores o pruebas; documentar la migración.
+4. Fijar el ID UPM `com.sparkygames.messagebus` y el ensamblado `SparkyGames.MessageBus` antes de publicar, sustituyendo los nombres anteriores. Si se separa el núcleo de la integración Unity en dos ensamblados, hacerlo solo si aporta una ventaja concreta a consumidores o pruebas; documentar la migración.
 
 **Terminado cuando:** se puede publicar y recibir un mensaje propio con un ejemplo breve, sin herencia ni metadatos obligatorios, y cada tipo público restante tiene un propósito claro.
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace SparkyGames.UnityServiceBus.Tests
+namespace SparkyGames.MessageBus.Tests
 {
     public sealed class BusTests
     {
@@ -144,7 +144,7 @@ namespace SparkyGames.UnityServiceBus.Tests
         [Test]
         public void BrokerReusesAndRemovesNamedBuses()
         {
-            var name = "servicebus-test-" + Guid.NewGuid();
+            var name = "messagebus-test-" + Guid.NewGuid();
             var first = UnityMessageBroker.GetOrCreateBus(name);
 
             try

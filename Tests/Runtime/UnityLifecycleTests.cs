@@ -5,38 +5,38 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace SparkyGames.UnityServiceBus.Tests
+namespace SparkyGames.MessageBus.Tests
 {
     public sealed class UnityLifecycleTests
     {
-        private const string BusName = "ServiceBusPlayModeTests";
+        private const string BusName = "MessageBusPlayModeTests";
 
         [UnityTest]
         public IEnumerator DestroyingOrDisablingOneComponentKeepsOtherSubscribers()
         {
             var firstObject = new GameObject("first receiver");
             var secondObject = new GameObject("second receiver");
-            var first = firstObject.AddComponent<ServiceBusTestReceiver>();
-            var second = secondObject.AddComponent<ServiceBusTestReceiver>();
+            var first = firstObject.AddComponent<MessageBusTestReceiver>();
+            var second = secondObject.AddComponent<MessageBusTestReceiver>();
             var bus = UnityMessageBroker.GetOrCreateBus(BusName);
 
-            bus.Publish(new ServiceBusTestMessage());
+            bus.Publish(new MessageBusTestMessage());
             Assert.That(first.ReceivedCount, Is.EqualTo(1));
             Assert.That(second.ReceivedCount, Is.EqualTo(1));
 
             UnityEngine.Object.Destroy(firstObject);
             yield return null;
 
-            bus.Publish(new ServiceBusTestMessage());
+            bus.Publish(new MessageBusTestMessage());
             Assert.That(second.ReceivedCount, Is.EqualTo(2));
             Assert.That(UnityMessageBroker.GetOrCreateBus(BusName), Is.SameAs(bus));
 
             secondObject.SetActive(false);
-            bus.Publish(new ServiceBusTestMessage());
+            bus.Publish(new MessageBusTestMessage());
             Assert.That(second.ReceivedCount, Is.EqualTo(2));
 
             secondObject.SetActive(true);
-            bus.Publish(new ServiceBusTestMessage());
+            bus.Publish(new MessageBusTestMessage());
             Assert.That(second.ReceivedCount, Is.EqualTo(3));
 
             UnityEngine.Object.Destroy(secondObject);
@@ -47,7 +47,7 @@ namespace SparkyGames.UnityServiceBus.Tests
         [Test]
         public void PlaySessionResetDisposesGlobalBusesAndClearsRegistry()
         {
-            var name = "servicebus-reset-" + Guid.NewGuid();
+            var name = "messagebus-reset-" + Guid.NewGuid();
             var oldBus = UnityMessageBroker.GetOrCreateBus(name);
             var reset = typeof(UnityMessageBroker).GetMethod(
                 "ResetForPlaySession", BindingFlags.NonPublic | BindingFlags.Static);
@@ -55,7 +55,7 @@ namespace SparkyGames.UnityServiceBus.Tests
 
             reset.Invoke(null, null);
 
-            Assert.Throws<ObjectDisposedException>(() => oldBus.Publish(new ServiceBusTestMessage()));
+            Assert.Throws<ObjectDisposedException>(() => oldBus.Publish(new MessageBusTestMessage()));
             Assert.That(UnityMessageBroker.GetAll(), Is.Empty);
             var newBus = UnityMessageBroker.GetOrCreateBus(name);
             Assert.That(newBus, Is.Not.SameAs(oldBus));

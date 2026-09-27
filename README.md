@@ -1,24 +1,24 @@
-# Sparky Games Service Bus
+# Sparky Games Message Bus
 
 Bus de mensajes síncrono para comunicar componentes y sistemas de Unity sin referencias directas entre emisor y receptor.
 
-- Paquete UPM: `com.sparkygames.servicebus`.
+- Paquete UPM: `com.sparkygames.messagebus`.
 - Versión: `2.0.0`.
 - Unity mínimo declarado: `6000.0`.
-- Ensamblado: `SparkyGames.ServiceBus`.
-- Namespace: `SparkyGames.UnityServiceBus`.
+- Ensamblado: `SparkyGames.MessageBus`.
+- Namespace: `SparkyGames.MessageBus`.
 - Dependencias UPM: ninguna.
 
 ## Instalación
 
-En Package Manager, usar **Add package from git URL** con `https://github.com/javier-miller/unity-servicebus.git#v2.0.0` una vez publicado el tag. Para desarrollar desde una copia local, usar **Add package from disk** y elegir el `package.json` de esta carpeta. El paquete incluye el sample **Basic Messaging** en la pestaña Samples.
+En Package Manager, usar **Add package from git URL** con `https://github.com/javier-miller/com.sparkygames.messagebus.git#v2.0.0` una vez publicado el tag. Para desarrollar desde una copia local, usar **Add package from disk** y elegir el `package.json` de esta carpeta. El paquete incluye el sample **Basic Messaging** en la pestaña Samples.
 
 ## Uso desde un MonoBehaviour
 
 Un mensaje solo necesita implementar `IMessage`:
 
 ```csharp
-using SparkyGames.UnityServiceBus;
+using SparkyGames.MessageBus;
 
 public sealed class PlayerDamaged : IMessage
 {
@@ -31,7 +31,7 @@ Cada receptor conserva y libera su propia suscripción:
 
 ```csharp
 using System;
-using SparkyGames.UnityServiceBus;
+using SparkyGames.MessageBus;
 using UnityEngine;
 
 public sealed class DamageDisplay : MonoBehaviour
@@ -79,6 +79,6 @@ Si un emisor necesita registrar los errores de los receptores, puede capturar `A
 
 El sample **Basic Messaging** contiene un emisor y un receptor `MonoBehaviour`. Importarlo desde Package Manager, añadir cada componente a un GameObject activo y entrar en Play; el receptor registra el mensaje en Console. Su README indica los pasos exactos.
 
-Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.servicebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La versión `2.0.0` se verificó en Unity `6000.6.0f1` y `6000.6.2f1`; el mínimo `6000.0` se declara para la línea Unity 6, aunque esa revisión exacta no estaba disponible para probarla. Las versiones anteriores a Unity 6 ya no forman parte del soporte previsto.
+Las pruebas del paquete están en `Tests/Editor` y `Tests/Runtime`. Para ejecutarlas desde Package Manager, el proyecto de prueba debe tener Unity Test Framework y añadir `"com.sparkygames.messagebus"` a la lista `testables` de `Packages/manifest.json`. Ejecutar los suites Edit Mode y Play Mode desde Test Runner. La identidad `com.sparkygames.messagebus` se importó desde Git y se verificó en Unity `6000.6.2f1` con 8 pruebas Edit Mode y 3 Play Mode, incluido el sample. Antes del cambio de nombre, el runtime de `2.0.0` también se verificó en Unity `6000.6.0f1`; el mínimo `6000.0` se declara para la línea Unity 6, aunque esa revisión exacta no estaba disponible para probarla. Las versiones anteriores a Unity 6 ya no forman parte del soporte previsto.
 
 Los cambios incompatibles con `1.0.0` y los pasos de migración están en `CHANGELOG.md`.

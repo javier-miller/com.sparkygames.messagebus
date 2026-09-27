@@ -1,7 +1,7 @@
 {
-    "name": "SparkyGames.ServiceBus.BasicSample",
-    "rootNamespace": "SparkyGames.UnityServiceBus.Samples",
-    "references": ["SparkyGames.ServiceBus"],
+    "name": "SparkyGames.MessageBus",
+    "rootNamespace": "",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -1,6 +1,6 @@
 using System;
 
-namespace SparkyGames.UnityServiceBus
+namespace SparkyGames.MessageBus
 {
     /// <summary>Publishes messages and owns their subscriptions.</summary>
     public interface IBus : IDisposable
